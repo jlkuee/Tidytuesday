@@ -1,0 +1,50 @@
+---
+title: "12-15"
+author: "Yiyun Sun"
+date: "4/5/2021"
+output: html_document
+---
+
+```{r}
+ninja_warrior <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-12-15/ninja_warrior.csv')
+```
+
+```{r}
+library(tidyverse)
+library(tidytext)
+```
+
+```{r}
+stage <- ninja_warrior %>% 
+  count(round_stage, sort = TRUE) %>% 
+  unnest_tokens(word, 
+                round_stage, 
+                drop = FALSE) %>% 
+  anti_join(stop_words,
+            by = "word") %>% 
+  mutate(unique_names = n_distinct(round_stage)) %>% 
+  group_by(word) %>% 
+  summarize(n_names = n(),
+            prop_names = n()/mean(unique_names),
+            times_used = sum(n)) %>% 
+  arrange(desc(n_names))
+
+stage <- ninja_warrior %>% 
+  group_by(round_stage) %>% 
+  summarize(count = n(),
+            prop = n()/889) %>% 
+  arrange(desc(count))
+
+
+stage %>%
+  ggplot(aes(x = prop, 
+             y = round_stage)) +
+  geom_point(aes(size = count),
+             color = "#0047A2") +
+  geom_segment(aes(xend = 0, yend = round_stage),
+               color = "#0047A2",
+               size = .2) +
+  labs(x = "",
+       y = "") 
+```
+
