@@ -1,0 +1,46 @@
+---
+title: "03-23"
+author: "Yiyun Sun"
+date: "4/4/2021"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(readxl)
+library(janitor)
+library(ggthemes)
+```
+
+```{r}
+unvotes <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-03-23/unvotes.csv')
+
+issues <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-03-23/issues.csv')
+
+```
+
+
+```{r}
+vote_data <- inner_join(unvotes, issues, by="rcid") 
+vote_data <- na.omit(vote_data)
+data <- vote_data %>%
+  filter(country == "United States"|country =="China"|country == "Canada"|country == "United Kingdom"|country == "Russia") %>%
+  group_by(issue, vote, country) %>%
+  mutate(count = n())
+```
+
+
+```{r}
+data %>% 
+  ggplot(aes(x = issue, y = count, fill = vote)) +
+  geom_col() +
+  coord_flip() +
+  scale_fill_brewer(labels = c("Abstain","No","Yes")) +
+  facet_grid(country ~ .) 
+```
+
+
+
+
+
+
