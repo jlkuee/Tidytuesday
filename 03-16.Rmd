@@ -1,0 +1,44 @@
+---
+title: "03-16"
+author: "Yiyun Sun"
+date: "4/5/2021"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+games <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-03-16/games.csv')
+```
+
+
+```{r}
+games2020 <- games %>%
+  filter(year == 2020) %>%
+  na.omit(games2020)
+
+gain_most <- games2020 %>%
+  group_by(gamename) %>%
+  summarise(total_gain = sum(gain)) %>%
+  arrange(desc(total_gain)) %>%
+  top_n(5)
+  
+gain <- left_join(gain_most, games2020, by = "gamename")
+
+ggplot(gain, aes(x = month, y = avg, group = gamename, color = gamename)) +
+  geom_line() +
+  geom_point() + 
+    labs(title = "The top five games earn the most",
+        subtitle = "Variance tendency of average number of players of each month",
+        x = NULL,
+        y = "Average number of players at the same time",
+        color = "Game name",
+        caption = "Data: TidyTuesday") + 
+  theme(plot.title = element_text(family = "Impact", size = 14),
+        axis.text.x = element_text(angle = 50, hjust = 1)) 
+
+
+```
+
