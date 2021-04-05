@@ -1,0 +1,39 @@
+---
+title: "02-23"
+author: "Yiyun Sun"
+date: "4/5/2021"
+output: html_document
+---
+```{r}
+employed <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-02-23/employed.csv')
+
+earn <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-02-23/earn.csv')
+
+```
+
+
+```{r}
+employed %>% 
+  group_by(industry, race_gender) %>%
+  mutate(count = n()) %>%
+  na.omit(employed) %>%
+  ggplot(aes(x = industry, y = count, fill = race_gender)) +
+  geom_bar(stat = "identity") +
+    theme_minimal() +
+  labs(title = "Cases by outbreak type and week in Toronto, Canada",
+       subtitle = "Confirmed and probable cases",
+       x = "Date",
+       y = "Case count") +  
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) 
+```
+
+```{r}
+earn %>% 
+  filter(sex != "Both Sexes") %>%
+  ggplot(aes(x = age, y = median_weekly_earn, fill = sex)) + 
+  geom_boxplot() +
+  facet_wrap(~age, scale="free")
+```
+
+
+
